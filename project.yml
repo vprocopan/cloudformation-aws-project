@@ -2,9 +2,27 @@ Description: >
     Procopan Vitalie / Udacity 2021 - CloudFormation Project
 Parameters:
 # whatever you consider a changing value, put it as a parameter instead of hard-coding it into your script
+  
   EnvironmentName:
     Description: An environment name that will be prefixed to resource names
     Type: String
+
+  WebServerImageId:
+    Description: Web serve image id
+    Type: String
+    Default: ami-0ac73f33a1888c64a # Ubuntu Server 18.04 LTS
+
+  WebServerVolumeSize:
+    Description: Web server disk volume size
+    Type: String
+    Default: "10"
+
+  WebServerInstanceType:
+    Description: Web server instance type
+    Type: String
+    Default: "t3.medium"
+
+
 Resources:
   UdacityS3ReadOnlyEC2:
       Type: 'AWS::IAM::Role'
@@ -27,8 +45,7 @@ Resources:
     Properties: 
       Path: "/"
       Roles: 
-        - 
-          Ref: "UdacityS3ReadOnlyEC2"
+        - Ref: "UdacityS3ReadOnlyEC2"
   LBSecGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -82,16 +99,16 @@ Resources:
           cd /var/www/html
           aws s3 cp s3://udacity-demo-1/udacity.zip .
           unzip -o udacity.zip
-      ImageId: ami-0ac73f33a1888c64a
+      ImageId: !Ref WebServerImageId
       #KeyName: that-one
       SecurityGroups:
       - Ref: WebServerSecGroup
-      InstanceType: t3.medium
+      InstanceType: !Ref WebServerInstanceType
       IamInstanceProfile: !Ref MyInstanceProfile
       BlockDeviceMappings:
       - DeviceName: "/dev/sdk"
         Ebs:
-          VolumeSize: '10'
+          VolumeSize: !Ref WebServerVolumeSize
   WebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
@@ -146,9 +163,7 @@ Resources:
       VpcId: 
         Fn::ImportValue:
           Fn::Sub: "${EnvironmentName}-VPCID"
-
 Outputs: 
-    
     DNS:
       Description: The DNSName of the backup load balancer
       Value: 

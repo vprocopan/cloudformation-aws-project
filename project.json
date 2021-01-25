@@ -2,5 +2,17 @@
 	{
 		"ParameterKey": "EnvironmentName",
 		"ParameterValue": "UdacityProject"
+	},
+	{
+		"ParameterKey": "WebServerImageId",
+		"ParameterValue": "ami-0ac73f33a1888c64a"
+	},
+	{
+		"ParameterKey": "WebServerVolumeSize",
+		"ParameterValue": "10"
+	},
+    {
+		"ParameterKey": "WebServerInstanceType",
+		"ParameterValue": "t3.medium"
 	}
 ]
